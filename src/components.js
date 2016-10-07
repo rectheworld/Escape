@@ -154,19 +154,18 @@ createRoom = function( xStart,xEnd, yStart, yEnd, doorPosition){
 
 
 
-  // if(doorPosition === 'BOTTOMRIGHT'){
-  //   for(i = xStart; i <= xEnd; i ++){
-  //       createFrontWall(i,yStart)
-  //     }
+  if(doorPosition === 'BOTTOMRIGHT'){
+    for(i = xStart; i <= xEnd; i ++){
+        createFrontWall(i,yStart)
+      }
 
-  //     createFrontWall(xStart,yEnd - 1) // this is the wall at the first position on the bottom
-  //     for(i = xStart; i <= xEnd - 2; i ++){
-  //       createFrontWall(i,yEnd)
-  //     }
+      for(i = xStart; i <= xEnd - 1; i ++){
+        createFrontWall(i,yEnd)
+      }
 
-  //   Crafty.e('CornerWall').at(xEnd +1,yEnd)
-  //   Crafty.e('CornerWall').at(xEnd +1,yEnd +1).attr({h:32/2})
-  // }
+    Crafty.e('CornerWall').at(xEnd +1,yEnd)
+    Crafty.e('CornerWall').at(xEnd +1,yEnd +1).attr({h:32/2})
+  }
 
 
 
@@ -277,7 +276,7 @@ Crafty.c('PlayerCharacter', {
       .color('rgb(0,0,255)')
       .fourway(4)
       .stopOnSolids()
-      .attr({w:32/2})
+      .attr({w:32/2, h: 32 - 2})
       .onHit('Village', this.visitVillage)
       .onHit('Wall', this.wallHit)
       // These next lines define our four animations
@@ -306,6 +305,28 @@ Crafty.c('PlayerCharacter', {
     //     this.pauseAnimation();
     //   }
     // });
+
+.bind("Moved", function(oldPos){
+
+          // console.log('oldPos', oldPos.x, oldPos.y)
+          // console.log('current pos', this.x, this.y)
+
+
+
+          
+          /// Set Viewpoint 
+
+          if (this.x >= (Game.screen_view.width / 2))
+          {
+            Crafty.viewport.x = (this.x - (Game.screen_view.width / 2)) * -1;
+          }
+          if (this.y >= (Game.screen_view.height / 2))
+          {
+            Crafty.viewport.y = (this.y - (Game.screen_view.height / 2)) * -1;
+          }
+
+          document.getElementById('_position').innerHTML = String(this.at().x).concat(" , ",  String(this.at().y))
+        });
   },
 
   // Registers a stop-movement function to be called when
@@ -337,7 +358,6 @@ Crafty.c('PlayerCharacter', {
 
     /// If walking neither in front or behind a wall 
     if(this.hit('BottomWall') && this.hit('TopWall')){
-      console.log('here')
           this.stopMovement()
 
     }else{

@@ -12,7 +12,18 @@ Crafty.scene('Game', function() {
   }
 
   // Player character, placed at 5, 5 on our grid
-  this.player = Crafty.e('PlayerCharacter').at(6, 8);
+  this.player = Crafty.e('PlayerCharacter').at(13, 34);
+
+  if (this.player.x >= (Game.screen_view.width / 2))
+  {
+    Crafty.viewport.x = (this.player.x - (Game.screen_view.width / 2)) * -1;
+  }
+  if (this.player.y >= (Game.screen_view.height / 2))
+  {
+    Crafty.viewport.y = (this.player.y - (Game.screen_view.height / 2)) * -1;
+  }
+
+
   this.occupied[this.player.at().x][this.player.at().y] = true;
 
   // Place a tree at every edge square on our grid of 16x16 tiles
@@ -43,18 +54,64 @@ Crafty.scene('Game', function() {
   //   }
   // }
 
-  createRoom(7,10,2,5, doorPosition = "BOTTOMLEFT") // 3243
-  createRoom(11,14,2,5, doorPosition = "RIGHTBOTTOM") // My office 
-  createRoom(11,14,5,8, doorPosition = "RIGHTTOP")// Micheal Office 
+  createRoom(17,20,52,55, doorPosition = "BOTTOMLEFT") // 3243
+  createRoom(21,24,52,55, doorPosition = "RIGHTBOTTOM") // My office 
+  createRoom(21,24,55,58, doorPosition = "RIGHTTOP")// Micheal Office 
 
-  createRoom(13,15,11, 14, doorPosition = 'TOPLEFT') // 3246
-  createRoom(10,12,11, 14, doorPosition = 'TOPRIGHT') // 3247
-  createRoom(7,9,11, 14, doorPosition = 'TOPLEFT') // 3249
-  createRoom(4,6,11, 14, doorPosition = 'TOPLEFT') // 3250
-  createRoom(1,3,9, 14, doorPosition = 'RIGHTTOP') // 3252 Sandys OFfice 
+  createRoom(23,25,61, 64, doorPosition = 'TOPLEFT') // 3246
+  createRoom(20,22,61, 64, doorPosition = 'TOPRIGHT') // 3247
+  createRoom(17,19,61, 64, doorPosition = 'TOPLEFT') // 3249
+  createRoom(14,16,61, 64, doorPosition = 'TOPLEFT') // 3250
+  createRoom(11,13,59, 64, doorPosition = 'RIGHTTOP') // 3252 Sandys OFfice 
 
-  createRoom(1,3,6, 9, doorPosition = 'RIGHTTOP') // 3253
-  createRoom(1,3,3, 6, doorPosition = 'RIGHTBOTTOM') // 3253
+  createRoom(11,13,56, 59, doorPosition = 'RIGHTTOP') // 3253
+  createRoom(11,13,53, 56, doorPosition = 'RIGHTBOTTOM') // 3255
+  createRoom(11,13,50, 53, doorPosition = 'RIGHTTOP') // 3257
+
+
+  createRoom(17,20,49, 52, doorPosition = 'LEFTBOTTOM') // 3256
+  createRoom(15,18,46, 49, doorPosition = 'BOTTOMLEFT') // 3258 
+  createRoom(15,18,43, 46, doorPosition = 'LEFTBOTTOM') /// 3260
+  createRoom(15,18,40, 43, doorPosition = 'LEFTBOTTOM') /// 3262
+
+
+
+  createRoom(11,12,46, 50, doorPosition = 'RIGHTTOP') // 3259
+  createRoom(11,12,43, 46, doorPosition = 'RIGHTTOP') // 3259
+  createRoom(11,12,39, 43, doorPosition = 'RIGHTTOP') // 3261
+  createRoom(11,12,34, 39, doorPosition = 'RIGHTTOP') // 3263
+
+  
+  createRoom(15,17,34, 37, doorPosition = 'TOPRIGHT') /// 3144  
+  createRoom(18,20,34, 37, doorPosition = 'TOPLEFT') /// 3142 
+  createRoom(21,23,34, 37, doorPosition = 'TOPLEFT') /// 3141
+  createRoom(24,26,34, 37, doorPosition = 'TOPRIGHT') /// 3138 
+
+  /// Bottom wall of idr
+  createFrontWall(0,34)
+  createFrontWall(1,34)
+  createFrontWall(2,34)
+  createFrontWall(3,34)
+  createFrontWall(4,34)
+  createFrontWall(5,34)
+  createFrontWall(6,34)
+  createFrontWall(7,34)
+  createFrontWall(8,34)
+  createFrontWall(9,34)
+  createFrontWall(10,34)
+
+
+  createRoom(14,16,28, 31, doorPosition = 'BOTTOMLEFT') ///3145
+  createRoom(17,20,25, 28, doorPosition = 'BOTTOMLEFT') ///3143
+  createRoom(21,23,27, 30, doorPosition = 'BOTTOMLEFT') ///3140
+  createRoom(24,26,28, 31, doorPosition = 'BOTTOMLEFT') ///3140
+  createRoom(27,30,28, 31, doorPosition = 'BOTTOMLEFT') ///3140
+
+
+  createRoom(8,10,28, 31, doorPosition = 'RIGHTBOTTOM') ///3147
+  createRoom(5,7,28, 31, doorPosition = 'BOTTOMLEFT') ///3148
+  createRoom(1,4,28, 31, doorPosition = 'BOTTOMRIGHT') ///3149
+  createRoom(1,3,31, 34, doorPosition = 'RIGHTBOTTOM') ///3150
 
 
 
