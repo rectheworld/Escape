@@ -43,7 +43,160 @@ createFrontWall = function(x,y){
 
   top_wall.bottom_wall = bottom_wall
   bottom_wall.top_wall = top_wall
-}
+};
+
+
+
+
+createRoom = function( xStart,xEnd, yStart, yEnd, doorPosition){
+
+
+
+  // Top Wall Options 
+  if(doorPosition === 'TOPLEFT'){
+    for(i = xStart; i <= xEnd; i ++){
+        createFrontWall(i,yEnd)
+      }
+
+      //createFrontWall(xStart,yStart) // this is the wall at the first position on the bottom
+      for(i = xStart + 1; i <= xEnd; i ++){
+        createFrontWall(i,yStart)
+      }
+
+    Crafty.e('CornerWall').at(xEnd +1,yEnd)
+    Crafty.e('CornerWall').at(xEnd +1,yEnd +1).attr({h:32/2})
+  }
+
+
+  if(doorPosition === 'TOPRIGHT'){
+    for(i = xStart; i <= xEnd; i ++){
+        createFrontWall(i,yEnd)
+      }
+
+      createFrontWall(xStart,yStart) // this is the wall at the first position on the bottom
+      for(i = xStart; i <= xEnd - 1; i ++){
+        createFrontWall(i,yStart)
+      }
+
+    Crafty.e('CornerWall').at(xEnd +1,yEnd)
+    Crafty.e('CornerWall').at(xEnd +1,yEnd +1).attr({h:32/2})
+  }
+
+
+
+  /// Left Wall Options 
+  if(doorPosition === 'LEFTTOP'){
+
+      for(i = yStart; i < yEnd; i ++){
+        createVirticalWall(xEnd + 1,i)
+      }
+
+      for(i = yStart + 2; i < yEnd; i ++){
+        createVirticalWall(xStart,i)
+      }
+  }
+
+  if(doorPosition === 'LEFTBOTTOM'){
+      for(i = yStart; i < yEnd; i ++){
+        createVirticalWall(xEnd + 1,i)
+      }
+
+
+      for(i = yStart; i < yEnd - 1; i ++){
+        createVirticalWall(xStart,i)
+      }
+  }
+
+  /// Right wall options 
+  if(doorPosition === 'RIGHTTOP'){
+
+      for(i = yStart; i < yEnd - 1; i ++){
+        createVirticalWall(xStart,i)
+      }
+      Crafty.e('VerticalWall_Bottom_Filler').attr({x:xStart * Game.map_grid.tile.width, y: (yEnd * Game.map_grid.tile.height) - 32/2})
+
+
+      for(i = yStart + 2; i < yEnd - 1; i ++){
+        createVirticalWall(xEnd + 1,i)
+      }
+      Crafty.e('VerticalWall_Bottom_Filler').attr({x:(xEnd + 1) * Game.map_grid.tile.width, y: (yEnd * Game.map_grid.tile.height) - 32/2})
+  }
+
+  if(doorPosition === 'RIGHTBOTTOM'){
+      for(i = yStart; i < yEnd - 1; i ++){
+        createVirticalWall(xStart,i)
+      }
+      Crafty.e('VerticalWall_Bottom_Filler').attr({x:xStart * Game.map_grid.tile.width, y: (yEnd * Game.map_grid.tile.height) - 32/2})
+
+      for(i = yStart; i < yEnd - 1; i ++){
+        createVirticalWall(xEnd + 1,i)
+      }
+  }
+
+
+  // Bottom Wall Options 
+
+  if(doorPosition === 'BOTTOMLEFT'){
+    for(i = xStart; i <= xEnd; i ++){
+        createFrontWall(i,yStart)
+      }
+
+      createFrontWall(xStart,yEnd) // this is the wall at the first position on the bottom
+      for(i = xStart + 2; i <= xEnd; i ++){
+        createFrontWall(i,yEnd)
+      }
+
+    Crafty.e('CornerWall').at(xEnd +1,yEnd)
+    Crafty.e('CornerWall').at(xEnd +1,yEnd +1).attr({h:32/2})
+
+  }
+
+
+
+
+  // if(doorPosition === 'BOTTOMRIGHT'){
+  //   for(i = xStart; i <= xEnd; i ++){
+  //       createFrontWall(i,yStart)
+  //     }
+
+  //     createFrontWall(xStart,yEnd - 1) // this is the wall at the first position on the bottom
+  //     for(i = xStart; i <= xEnd - 2; i ++){
+  //       createFrontWall(i,yEnd)
+  //     }
+
+  //   Crafty.e('CornerWall').at(xEnd +1,yEnd)
+  //   Crafty.e('CornerWall').at(xEnd +1,yEnd +1).attr({h:32/2})
+  // }
+
+
+
+
+
+  /// If the Door is not on the sides ofthe room 
+  if(doorPosition != 'LEFTTOP' && doorPosition != 'LEFTBOTTOM' && doorPosition != 'RIGHTTOP' && doorPosition != 'RIGHTBOTTOM' ){
+      for(i = yStart; i < yEnd -1 ; i ++){
+        createVirticalWall(xStart,i)
+        createVirticalWall(xEnd + 1,i)
+      }
+
+      Crafty.e('VerticalWall_Bottom_Filler').attr({x:(xEnd + 1) * Game.map_grid.tile.width, y: (yEnd * Game.map_grid.tile.height) - 32/2})
+      Crafty.e('VerticalWall_Bottom_Filler').attr({x:xStart * Game.map_grid.tile.width, y: (yEnd * Game.map_grid.tile.height) - 32/2})
+
+  }
+
+  /// If the Door is not on the top or bottom  ofthe room 
+  if(doorPosition != 'TOPLEFT' && doorPosition != 'TOPRIGHT' && doorPosition != 'BOTTOMLEFT' && doorPosition != 'BOTTOMRIGHT' ){
+      for(i = xStart; i <= xEnd; i ++){
+        createFrontWall(i,yStart)
+        createFrontWall(i,yEnd)
+      }
+
+      Crafty.e('CornerWall').at(xEnd +1,yEnd)
+      Crafty.e('CornerWall').at(xEnd +1,yEnd +1).attr({h:32/2})
+  }
+
+
+};
 
 Crafty.c('FrontWall_Top', {
   init: function(){
@@ -53,6 +206,8 @@ Crafty.c('FrontWall_Top', {
   }
 })
 
+
+
 Crafty.c('FrontWall_Bottom', {
   init: function(){
     this.requires('Actor, BottomWall, Color, Wall')
@@ -61,15 +216,42 @@ Crafty.c('FrontWall_Bottom', {
   }
 })
 
-Crafty.c('VerticalWall', {
+
+createVirticalWall = function(x,y){
+  top_wall = Crafty.e('VerticalWall_Top').at(x,y)
+  bottom_wall = Crafty.e('VerticalWall_Bottom').attr({x:x * Game.map_grid.tile.width, y: (y * Game.map_grid.tile.height) + 32/2})
+
+  top_wall.bottom_wall = bottom_wall
+  bottom_wall.top_wall = top_wall
+};
+
+
+Crafty.c('VerticalWall_Top', {
   init: function(){
-    this.requires('Actor, Solid, Color')
-    .attr({w: 5, x: this.x - 5, z:2})
+    this.requires('Actor, Color, TopWall, Wall')
+    .attr({h: 32/2, w: 5, z:2})
+    .color('rgb(50, 64, 128)')
+    
+  }
+})
+
+Crafty.c('VerticalWall_Bottom', {
+  init: function(){
+    this.requires('Actor, Color, BottomWall, TopWall,  Wall')
+    .attr({h: 32, w: 5, z:2})
     .color('rgb(0, 64, 128)')
     
   }
 })
 
+Crafty.c('VerticalWall_Bottom_Filler', {
+  init: function(){
+    this.requires('Actor, Color, TopWall, BottomWall,Wall')
+    .attr({h: 32/2, w: 5, z:2})
+    .color('rgb(50, 64, 128)')
+    
+  }
+})
 Crafty.c('CornerWall', {
   init: function(){
     this.requires('Actor, Wall, Color')
@@ -95,6 +277,7 @@ Crafty.c('PlayerCharacter', {
       .color('rgb(0,0,255)')
       .fourway(4)
       .stopOnSolids()
+      .attr({w:32/2})
       .onHit('Village', this.visitVillage)
       .onHit('Wall', this.wallHit)
       // These next lines define our four animations
@@ -152,32 +335,41 @@ Crafty.c('PlayerCharacter', {
     //console.log(data[0].obj)
     this_wall = data[0].obj;
 
+    /// If walking neither in front or behind a wall 
+    if(this.hit('BottomWall') && this.hit('TopWall')){
+      console.log('here')
+          this.stopMovement()
+
+    }else{
+
+
+    // this will make it so it appear like you are in front of a wall 
     if(this.hit('BottomWall')){
       for(i = 0; i < data.length; i++){
         data[i].obj.attr({z:-1})
       }
       if(this._movement.y < 0){ 
         if(this.hit('TopWall')){
-          
-          
           this.stopMovement()
-        }
-        
+        } 
       }
-
     }
+
+    // this will make it so it appear like you are in behind a wall 
     if(this.hit('TopWall')){
       for(i = 0; i < data.length; i++){
         data[i].obj.attr({z:1})
       }
-      //this_wall.attr({z:1})
       if(this._movement.y > 0){
         if(this.hit('BottomWall')){
+
           this.stopMovement()
         }
-        
       }
     }
+
+  }
+
 
     // if(this._movement.y > 0){ // going down
     //   //this_wall.bottom_wall.requires('Solid')

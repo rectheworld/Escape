@@ -12,7 +12,7 @@ Crafty.scene('Game', function() {
   }
 
   // Player character, placed at 5, 5 on our grid
-  this.player = Crafty.e('PlayerCharacter').at(5, 5);
+  this.player = Crafty.e('PlayerCharacter').at(6, 8);
   this.occupied[this.player.at().x][this.player.at().y] = true;
 
   // Place a tree at every edge square on our grid of 16x16 tiles
@@ -43,49 +43,40 @@ Crafty.scene('Game', function() {
   //   }
   // }
 
-  /// Create some wall example peices 
-  createFrontWall(10,6)
-  createFrontWall(11,6)
-  createFrontWall(12,6)
-  createFrontWall(13,6)
-  createFrontWall(14,6)
+  createRoom(7,10,2,5, doorPosition = "BOTTOMLEFT") // 3243
+  createRoom(11,14,2,5, doorPosition = "RIGHTBOTTOM") // My office 
+  createRoom(11,14,5,8, doorPosition = "RIGHTTOP")// Micheal Office 
 
-  createFrontWall(10,10)
-  createFrontWall(11,10)
-  createFrontWall(12,10)
-  createFrontWall(13,10)
-  createFrontWall(14,10)
+  createRoom(13,15,11, 14, doorPosition = 'TOPLEFT') // 3246
+  createRoom(10,12,11, 14, doorPosition = 'TOPRIGHT') // 3247
+  createRoom(7,9,11, 14, doorPosition = 'TOPLEFT') // 3249
+  createRoom(4,6,11, 14, doorPosition = 'TOPLEFT') // 3250
+  createRoom(1,3,9, 14, doorPosition = 'RIGHTTOP') // 3252 Sandys OFfice 
 
-  Crafty.e('VerticalWall').at(10,6)
-  Crafty.e('VerticalWall').at(10,7)
-  Crafty.e('VerticalWall').at(10,8)
-  Crafty.e('VerticalWall').at(10,9)
+  createRoom(1,3,6, 9, doorPosition = 'RIGHTTOP') // 3253
+  createRoom(1,3,3, 6, doorPosition = 'RIGHTBOTTOM') // 3253
 
 
-  Crafty.e('VerticalWall').at(15,8)
-  Crafty.e('VerticalWall').at(15,9)
-  Crafty.e('CornerWall').at(15,10)
-  Crafty.e('CornerWall').at(15,11).attr({h:32/2})
-
-  /// Example Room 2 
-
-  /// Virtical walls first 
-  Crafty.e('VerticalWall').at(10,2)
-  Crafty.e('VerticalWall').at(10,3)
-  Crafty.e('VerticalWall').at(10,4)
-  Crafty.e('VerticalWall').at(10,5)
-
-  Crafty.e('VerticalWall').at(15,2)
-  Crafty.e('VerticalWall').at(15,3)
-  Crafty.e('VerticalWall').at(15,4)
 
 
-  // Bacwall
-  createFrontWall(10,2)
-  createFrontWall(11,2)
-  createFrontWall(12,2)
-  createFrontWall(13,2)
-  createFrontWall(14,2)
+
+
+    // Place a tree at every edge square on our grid of 16x16 tiles
+  for (var x = 0; x < Game.map_grid.width; x++) {
+    for (var y = 0; y < Game.map_grid.height; y++) {
+      var at_edge = x == 0 || x == Game.map_grid.width - 1 || y == 0 || y == Game.map_grid.height - 1;
+
+      if (at_edge) {
+        // Place a tree entity at the current tile
+        Crafty.e('Tree').at(x, y)
+        this.occupied[x][y] = true;
+      } else if (Math.random() < 0.06 && !this.occupied[x][y]) {
+        // Place a bush entity at the current tile
+
+      }
+    }
+  }
+
 
   // Play a ringing sound to indicate the start of the journey
   Crafty.audio.play('ring');
