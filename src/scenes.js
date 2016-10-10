@@ -12,7 +12,7 @@ Crafty.scene('Game', function() {
   }
 
   // Player character, placed at 5, 5 on our grid
-  this.player = Crafty.e('PlayerCharacter').at(13, 34);
+  this.player = Crafty.e('PlayerCharacter').at(20, 9);
 
   if (this.player.x >= (Game.screen_view.width / 2))
   {
@@ -115,7 +115,42 @@ Crafty.scene('Game', function() {
 
 
 
+  createRoom(15,16,25, 28, doorPosition = 'LEFTTOP') ///3153
+  createRoom(15,17,22, 25, doorPosition = 'LEFTBOTTOM') ///3157
+  createRoom(15,17,19, 22, doorPosition = 'LEFTTOP') ///3158A
+  createRoom(16,18,16, 19, doorPosition = 'LEFTBOTTOM') ///3158B
+  createRoom(17,19,13, 16, doorPosition = 'LEFTBOTTOM') ///3159A
+  createRoom(19,22,10, 13, doorPosition = 'LEFTBOTTOM') ///3159B
 
+
+
+  createRoom(7,9,23, 28, doorPosition = 'TOPRIGHT') ///3154
+  createRoom(3,6,25, 28, doorPosition = 'TOPRIGHT') ///3155
+  createRoom(6,9,17, 20, doorPosition = 'RIGHTBOTTOM') ///3156
+  createRoom(10,11,14, 18, doorPosition = 'RIGHTBOTTOM') ///B32b
+
+  createRoom(11,13,8, 11, doorPosition = 'BOTTOMLEFT') ///3271
+  createRoom(8,10,8, 11, doorPosition = 'BOTTOMLEFT') ///3269
+  createRoom(5,7,7, 10, doorPosition = 'BOTTOMLEFT') ///3268
+  createRoom(2,7,2, 7, doorPosition = 'BOTTOMLEFT') ///3267
+  createRoom(1,2,7, 10, doorPosition = 'RIGHTBOTTOM') ///3267
+
+  createRoom(14,16,6, 9, doorPosition = 'BOTTOMLEFT') ///3272
+  createRoom(17,20,2, 7, doorPosition = 'BOTTOMRIGHT') ///3267
+  createRoom(21,25,2, 7, doorPosition = 'BOTTOMRIGHT') ///3274
+  createRoom(26,28,2, 7, doorPosition = 'BOTTOMRIGHT') ///3275
+  createRoom(29,31,2, 7, doorPosition = 'BOTTOMLEFT') ///3276
+  createRoom(32,35,2, 7, doorPosition = 'BOTTOMRIGHT') ///3277
+  createRoom(36,38,2, 7, doorPosition = 'BOTTOMRIGHT') ///3278
+  createRoom(39,42,2, 7, doorPosition = 'BOTTOMLEFT') ///3279
+  createRoom(43,46,2, 9, doorPosition = 'LEFTBOTTOM') ///3280
+
+
+  createRoom(23,25,10, 13, doorPosition = 'TOPLEFT') ///3161
+  createRoom(26,28,10, 13, doorPosition = 'TOPRIGHT') ///3162
+  createRoom(29,31,10, 13, doorPosition = 'TOPLEFT') ///3163
+  createRoom(32,34,10, 13, doorPosition = 'TOPRIGHT') ///3164
+  createRoom(35,37,10, 13, doorPosition = 'TOPLEFT') ///3165
 
 
     // Place a tree at every edge square on our grid of 16x16 tiles

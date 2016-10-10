@@ -87,20 +87,22 @@ createRoom = function( xStart,xEnd, yStart, yEnd, doorPosition){
   /// Left Wall Options 
   if(doorPosition === 'LEFTTOP'){
 
-      for(i = yStart; i < yEnd; i ++){
+      for(i = yStart; i < yEnd - 1; i ++){
         createVirticalWall(xEnd + 1,i)
       }
+      Crafty.e('VerticalWall_Bottom_Filler').attr({x:(xEnd + 1) * Game.map_grid.tile.width, y: (yEnd * Game.map_grid.tile.height) - 32/2})
 
       for(i = yStart + 2; i < yEnd; i ++){
         createVirticalWall(xStart,i)
       }
+      //Crafty.e('VerticalWall_Bottom_Filler').attr({x:xStart * Game.map_grid.tile.width, y: (yEnd * Game.map_grid.tile.height) - 32/2})
   }
 
   if(doorPosition === 'LEFTBOTTOM'){
-      for(i = yStart; i < yEnd; i ++){
+      for(i = yStart; i < yEnd - 1 ; i ++){
         createVirticalWall(xEnd + 1,i)
       }
-
+      Crafty.e('VerticalWall_Bottom_Filler').attr({x:(xEnd + 1) * Game.map_grid.tile.width, y: (yEnd * Game.map_grid.tile.height) - 32/2})
 
       for(i = yStart; i < yEnd - 1; i ++){
         createVirticalWall(xStart,i)
