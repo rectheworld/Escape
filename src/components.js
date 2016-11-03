@@ -36,6 +36,7 @@ Crafty.c('Tree', {
 });
 
 
+
 createFrontWall = function(x,y){
 
   top_wall = Crafty.e('FrontWall_Top').at(x,y)
@@ -261,6 +262,35 @@ Crafty.c('CornerWall', {
     
   }
 })
+
+
+Crafty.c('Door', {
+  init: function(){
+    this.requires('Actor, Color, Door')
+    .attr({h: 32, w: 5})
+    .origin("bottom right")
+    .color('rgb(0, 0, 0)')
+    
+  }
+})
+
+Crafty.c('path_linear', {
+  init: function(){
+    this.requires('Actor, Color')
+    .color('rgb(250, 252, 194)')
+    
+  }
+})
+
+Crafty.c('path_agora', {
+  init: function(){
+    this.requires('Actor, Color')
+    .attr({z:-1})
+    .color('rgb(233, 237, 125)')
+    
+  }
+})
+
 
 // Crafty.c('WallFace', {
 //     init: function(){

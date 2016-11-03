@@ -12,6 +12,9 @@ Game = {
   screen_view: {
     width: 24 * 32,
     height: 16 * 32
+    // width: 93 * 32,
+    // height: 66 * 32
+
   },
 
   // The total width of the game screen. Since our grid takes up the entire screen
