@@ -439,17 +439,61 @@ Crafty.c('PlayerCharacter', {
   }
 });
 
-// A village is a tile on the grid that the PC must visit in order to win the game
-Crafty.c('Village', {
-  init: function() {
-    this.requires('Actor, Color')
-    .color('rgb(255,0,0)');
-  },
+Crafty.c('Project_Manager', {
+  init: function(){
+    this.requires('Actor, Color, Tween')
+    .attr({w:32/2, h: 32 - 2, z: 1})
+    .color('rgb(255,0,0)')
+    .bind("TweenEnd", function() {
+            
+            this.wonder()
+            });
+    
 
-  // Process a visitation with this village
-  visit: function() {
-    this.destroy();
-    Crafty.audio.play('knock');
-    Crafty.trigger('VillageVisited', this);
-  }
+    
+  },
+          
+    current_position: null,
+    previous_positions: null,
+    
+    setPosition: function(posLetter){
+        this.current_position = posLetter;
+    
+        position = Game.edge_map[posLetter].loc
+        this.attr({x: position[0] * Game.map_grid.tile.height, y: position[1] * Game.map_grid.tile.height})  
+        this.wonder()
+    },
+    
+    wonder: function(){
+        /// get edges of current 
+        current_edges = Game.edge_map[this.current_position].edges
+        index = Math.floor((Math.random()* current_edges.length))
+        
+        next_edge = current_edges[index]
+
+        console.log(next_edge)
+        
+        
+        
+        // Tween to the next location
+        this.tween({x: Game.edge_map[next_edge].loc[0] * Game.map_grid.tile.height, y: Game.edge_map[next_edge].loc[1]* Game.map_grid.tile.height}, 2000)
+        this.previous_positions = this.current_position
+        this.current_position = next_edge
+    }
+    
 });
+
+// A village is a tile on the grid that the PC must visit in order to win the game
+//Crafty.c('Village', {
+//  init: function() {
+//    this.requires('Actor, Color')
+//    .color('rgb(255,0,0)');
+//  },
+//
+//  // Process a visitation with this village
+//  visit: function() {
+//    this.destroy();
+//    Crafty.audio.play('knock');
+//    Crafty.trigger('VillageVisited', this);
+//  }
+//});
