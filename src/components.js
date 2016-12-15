@@ -449,15 +449,15 @@ Crafty.c('Project_Manager', {
             this.wonder()
             });
     
-
-    
   },
           
     current_position: null,
-    previous_positions: null,
+    previous_position: null,
+    speed: 4, /// 5 sqares per second 
     
     setPosition: function(posLetter){
         this.current_position = posLetter;
+        this.previous_position = posLetter;
     
         position = Game.edge_map[posLetter].loc
         this.attr({x: position[0] * Game.map_grid.tile.height, y: position[1] * Game.map_grid.tile.height})  
@@ -465,19 +465,50 @@ Crafty.c('Project_Manager', {
     },
     
     wonder: function(){
-        /// get edges of current 
-        current_edges = Game.edge_map[this.current_position].edges
+        /// get edges of current and clone into list for us 
+        var current_edges_og = Game.edge_map[this.current_position].edges
+        var current_edges = []; // An new empty array
+        for (var i = 0, len = current_edges_og.length; i < len; i++) {
+            current_edges[i] = current_edges_og[i];
+        }
+        
+        
+        console.log(current_edges)
+
+        /// remove the previous edge from the list of options if more than one option avalible 
+        if(current_edges.length > 1){
+            var pre_index = current_edges.indexOf(this.previous_position);
+            
+            console.log(pre_index)
+            current_edges.splice(pre_index, 1); 
+        }
+        
+        //console.log(current_edges)
+        //get a random index to move to
         index = Math.floor((Math.random()* current_edges.length))
         
+        // Set the next position to jurney too
         next_edge = current_edges[index]
+        //console.log(next_edge)
 
+        /// get distance between to places
+        console.log(current_edges)
         console.log(next_edge)
+        next_pos = Game.edge_map[next_edge].loc
+        this_pos = Game.edge_map[this.current_position].loc
+        
+        dx = next_pos[0] - this_pos[0]
+        dy = next_pos[1] - this_pos[1]
+        
+        distance = Math.floor(Math.sqrt((dx ** 2) + (dy ** 2)))
         
         
+        // Calulate the speed to get there 
+        millisecs = (distance/this.speed) * 1000
         
         // Tween to the next location
-        this.tween({x: Game.edge_map[next_edge].loc[0] * Game.map_grid.tile.height, y: Game.edge_map[next_edge].loc[1]* Game.map_grid.tile.height}, 2000)
-        this.previous_positions = this.current_position
+        this.tween({x: next_pos[0] * Game.map_grid.tile.height, y: next_pos[1] * Game.map_grid.tile.height}, millisecs)
+        this.previous_position = this.current_position;
         this.current_position = next_edge
     }
     
