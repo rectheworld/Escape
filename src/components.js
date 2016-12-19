@@ -292,6 +292,7 @@ Crafty.c('path_agora', {
 })
 
 
+
 // Crafty.c('WallFace', {
 //     init: function(){
 //     this.requires('Actor, Wall, Color')
@@ -304,7 +305,7 @@ Crafty.c('path_agora', {
 // This is the player-controlled character
 Crafty.c('PlayerCharacter', {
   init: function() {
-    this.requires('Actor, Fourway, Collision, SpriteAnimation, Color')
+    this.requires('Actor, Player, Fourway, Collision, SpriteAnimation, Color')
       .color('rgb(0,0,255)')
       .fourway(4)
       .stopOnSolids()
@@ -458,6 +459,9 @@ Crafty.c('Project_Manager', {
     setPosition: function(posLetter){
         this.current_position = posLetter;
         this.previous_position = posLetter;
+        
+        /// for testing 
+        Game.testManager = this
     
         position = Game.edge_map[posLetter].loc
         this.attr({x: position[0] * Game.map_grid.tile.height, y: position[1] * Game.map_grid.tile.height})  
@@ -473,13 +477,13 @@ Crafty.c('Project_Manager', {
         }
         
         
-        console.log(current_edges)
+        ///console.log(current_edges)
 
         /// remove the previous edge from the list of options if more than one option avalible 
         if(current_edges.length > 1){
             var pre_index = current_edges.indexOf(this.previous_position);
             
-            console.log(pre_index)
+            //console.log(pre_index)
             current_edges.splice(pre_index, 1); 
         }
         
@@ -492,8 +496,8 @@ Crafty.c('Project_Manager', {
         //console.log(next_edge)
 
         /// get distance between to places
-        console.log(current_edges)
-        console.log(next_edge)
+        //console.log(current_edges)
+        //console.log(next_edge)
         next_pos = Game.edge_map[next_edge].loc
         this_pos = Game.edge_map[this.current_position].loc
         
@@ -510,6 +514,54 @@ Crafty.c('Project_Manager', {
         this.tween({x: next_pos[0] * Game.map_grid.tile.height, y: next_pos[1] * Game.map_grid.tile.height}, millisecs)
         this.previous_position = this.current_position;
         this.current_position = next_edge
+    }, // End of wonder function
+    
+    a_star_search: function(current_position){
+//        The function is based on the tutorial at 
+//        https://www.codeproject.com/articles/9880/very-simple-a-algorithm-implementation
+        solutionPathLiast = [];
+        
+        /// The psotion we want to path to 
+        Game.rec_zone; // Why do i name shit like this????
+        
+        /// Create open and closed lists 
+        /// Open list is the nodes to explore
+        /// Closed list is the nodes already explored 
+        ///Note: these list should be sorted by cost
+        open_list = []
+        closed_list = []
+        
+        /// Place Put currentPosiiiton on the open list
+        open_list.push(current_position)  
+        
+        /// While open list is not empty 
+        while(open_list.length > 0){
+            /// Get the node off the open list
+            // with the lowest f and call it node_current 
+            node_cuurent = open_list.pop()
+            
+            /// If node_current i the same states as node_goal then
+            // yeah er are done 
+            if(node_cuurent == Game.rec_zone){
+                console.log('FOUND THE END!!!!')
+                ///node_goal.parentNode = node_current.parentNode ;
+                break
+            }
+            
+            // Get edges of current node
+            current_edges = Game.edge_map[node_cuurent].edges
+            
+            /// For each edge 
+            for(edge in current_edges){
+                /// Set the cost of the edge to be the cost of 
+                /// node_current plus  the cost to get to the edge position
+                
+                
+            }// end of for loop for edges 
+            
+        }// End of while loop 
+        
+        
     }
     
 });
@@ -528,3 +580,22 @@ Crafty.c('Project_Manager', {
 //    Crafty.trigger('VillageVisited', this);
 //  }
 //});
+
+Crafty.c('ZoneButton', {
+  init: function() {
+    this.requires('2D, Canvas, Collision')
+    .attr({h: 64, w:64})
+    .onHit('Player', this.signal_zone)
+    .setName()
+    ;
+  },
+    
+
+  setName: function(){
+    this.name = null;  
+  },
+  signal_zone: function() {
+      Game.rec_zone = this.name
+  }, // End of singal zone
+    
+});

@@ -240,7 +240,7 @@ Crafty.scene('Game', function() {
           'edges':['G2', 'D2','B2']
       },
       'D2':{
-          'loc':[71,9],
+          'loc':[77,9],
           'edges':['E2','C2', 'X2']
       },
       'E2':{
@@ -264,11 +264,21 @@ Crafty.scene('Game', function() {
         'edges': ['C', 'H2']
     }
       
+  } // end of edge map 
+  
+  
+  /// Create 'buttons' for player to step on based on zones 
+  for (key in Game.edge_map){
+    //console.log(key)
+    this_button = Crafty.e('ZoneButton').attr({x:Game.edge_map[key].loc[0] * Game.map_grid.tile.height,y:Game.edge_map[key].loc[1] * Game.map_grid.tile.height})
+    this_button.name = key
+    
   }
+  
 
 
    /// Testing out the moject manager stuff 
-  console.log(Game.edge_map.A.loc[1])
+  //console.log(Game.edge_map.A.loc[1])
   im_x = Game.edge_map.B.loc[0]
   im_y = Game.edge_map.B.loc[1]
   Crafty.e('Project_Manager').setPosition("B")
