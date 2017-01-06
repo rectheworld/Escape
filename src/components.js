@@ -517,9 +517,12 @@ Crafty.c('Project_Manager', {
     }, // End of wonder function
     
     a_star_search: function(current_position){
+        /// this should really be done with node objects,
+        //// but for right now this is good for learning 
+        
 //        The function is based on the tutorial at 
 //        https://www.codeproject.com/articles/9880/very-simple-a-algorithm-implementation
-        solutionPathLiast = [];
+        solutionPathList = [];
         
         /// The psotion we want to path to 
         Game.rec_zone; // Why do i name shit like this????
@@ -531,33 +534,139 @@ Crafty.c('Project_Manager', {
         open_list = []
         closed_list = []
         
+        /// This is a object that will store the costs and partents
+        /// of the objects in the list above 
+        postion_details = {}
+        
         /// Place Put currentPosiiiton on the open list
         open_list.push(current_position)  
+        
+        // Add the psotion details po the current positon
+        postion_details[current_position] = {parent: null, F: 0}
         
         /// While open list is not empty 
         while(open_list.length > 0){
             /// Get the node off the open list
             // with the lowest f and call it node_current 
-            node_cuurent = open_list.pop()
+            
+            /// Find the item with the lowest F 
+            lowest_F = 1000 // set it high to start the loop
+            lowestPosIndex =null
+            for (index in open_list){
+                
+                pos = open_list[index]
+                if(postion_details[pos].parent = null){
+                    lowestPosIndex = pos
+                    break
+                }
+                
+                this_F = postion_details[pos].F
+                
+                if (this_F < lowest_F){
+                    lowestPosIndex = index
+                }
+            }
+            
+            
+            
+            node_current = open_list[lowestPosIndex]
             
             /// If node_current i the same states as node_goal then
             // yeah er are done 
-            if(node_cuurent == Game.rec_zone){
+            if(node_current == Game.rec_zone){
                 console.log('FOUND THE END!!!!')
                 ///node_goal.parentNode = node_current.parentNode ;
                 break
             }
             
             // Get edges of current node
-            current_edges = Game.edge_map[node_cuurent].edges
+            current_edges = Game.edge_map[node_current].edges
             
             /// For each edge 
-            for(edge in current_edges){
+            for (index in current_edges){
                 /// Set the cost of the edge to be the cost of 
-                /// node_current plus  the cost to get to the edge position
+                /// node_current plus the cost to get to the edge position
+                edge = current_edges[index]
                 
+                /// Distance b/w parent and this edge
+                parent_pos = Game.edge_map[node_current].loc
+                edge_pos = Game.edge_map[edge].loc
+
+                dx = edge_pos[0] - parent_pos[0]
+                dy = edge_pos[1] - parent_pos[1]
+
+                distance_parent = Math.floor(Math.sqrt((dx ** 2) + (dy ** 2)))
+                
+                /// Distance b/w this edge anf the goal 
+                goal_pos = Game.edge_map[Game.rec_zone].loc
+
+                dx = edge_pos[0] - goal_pos[0]
+                dy = edge_pos[1] - goal_pos[1]
+
+                distance_goal = Math.floor(Math.sqrt((dx ** 2) + (dy ** 2)))              
+                
+                F = distance_parent + distance_goal
+                
+                console.log(current_edges[index], distance_parent, distance_goal)
+                
+                /// Test to see if the edge is on the closed list 
+                console.log(edge , closed_list)
+                edgeFoundIndex_closed = closed_list.indexOf(edge);
+                edgeFoundIndex_open = open_list.indexOf(edge);
+
+                //if node_successor is on the OPEN list
+               //but the existing one is as good
+               //or better then discard this successor and continue;
+                if (edgeFoundIndex_open>0){
+                 
+                    existing_node = open_list[edgeFoundIndex_open];
+                    
+                     if (postion_details[edge].F <= F){
+                       continue;
+                     }
+                }/// End of Checking if node in closed list
+                
+                
+               //if node_successor is on the CLOSED list
+               //but the existing one is as good
+               //or better then discard this successor and continue;
+                if (edgeFoundIndex_closed>0){
+                 
+                    existing_node = closed_list[edgeFoundIndex_closed];
+                    
+                     if (postion_details[edge].F <= F){
+                       continue;
+                     }// End of If to test if the new approch to the discovered node is better than the one found 
+
+                }// End of Checking if node in closed list 
+                
+                /// In theory is a better path to the edge is found on the open or closed this this line will never run 
+                /// this path is now the best 
+                postion_details[edge] = {parent: node_current, F: F}
+                    
+                //Remove occurences of node_successor from OPEN and CLOSED
+               if (edgeFoundIndex_open!=-1)
+                  open_list.splice(edgeFoundIndex_open, 1);
+               if (edgeFoundIndex_closed!=-1)
+                  closed_list.splice(edgeFoundIndex_closed, 1 );
+                
+                /// Add this edge to the open list
+                open_list.push(edge)
                 
             }// end of for loop for edges 
+            
+            // add the current node to the closed list
+            closed_list.push(node_current)
+            
+            // remove from open list
+            current_index = open_list.indexOf(node_current)
+
+            open_list.splice(current_index, 1)
+            
+            console.log("openlist", open_list)
+            console.log("closedlist", closed_list)
+            
+            ///break
             
         }// End of while loop 
         
