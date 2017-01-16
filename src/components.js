@@ -520,6 +520,9 @@ Crafty.c('Project_Manager', {
         /// this should really be done with node objects,
         //// but for right now this is good for learning 
         
+        /// This is a counter that will stop after 100 node searches 
+        var counter = 0 
+        
 //        The function is based on the tutorial at 
 //        https://www.codeproject.com/articles/9880/very-simple-a-algorithm-implementation
         solutionPathList = [];
@@ -542,12 +545,24 @@ Crafty.c('Project_Manager', {
         open_list.push(current_position)  
         
         // Add the psotion details po the current positon
-        postion_details[current_position] = {parent: null, F: 0}
+        postion_details[current_position] = {parent: "ORIGIN", F: 0, history: 0, origin: true}
+        
         
         /// While open list is not empty 
         while(open_list.length > 0){
             /// Get the node off the open list
             // with the lowest f and call it node_current 
+            
+            /// for testing 
+            counter = counter + 1
+            console.log(counter)
+            if (counter === 100){
+                console.log("Hit 10")
+                break
+            }
+            
+            console.log("---------------------------")
+            
             
             /// Find the item with the lowest F 
             lowest_F = 1000 // set it high to start the loop
@@ -555,27 +570,73 @@ Crafty.c('Project_Manager', {
             for (index in open_list){
                 
                 pos = open_list[index]
-                if(postion_details[pos].parent = null){
-                    lowestPosIndex = pos
+                
+                //If this is the first round the staring node is the one we go with
+                if(postion_details[pos].parent == null){
+                    lowestPosIndex = index
                     break
                 }
                 
+                
                 this_F = postion_details[pos].F
                 
+                console.log(pos, this_F)
+                
                 if (this_F < lowest_F){
+                    lowest_F = this_F
                     lowestPosIndex = index
                 }
-            }
-            
+            } /// End of searching for lowest F 
             
             
             node_current = open_list[lowestPosIndex]
+            
+            console.log(node_current)
+            console.log("---------------------------")
+            
             
             /// If node_current i the same states as node_goal then
             // yeah er are done 
             if(node_current == Game.rec_zone){
                 console.log('FOUND THE END!!!!')
-                ///node_goal.parentNode = node_current.parentNode ;
+                
+                /// Get the path 
+                final_path = []
+                
+                console.log(node_current)
+                final_path.push(node_current)
+                parent = postion_details[node_current].parent
+                console.log("first parent", parent)
+                final_path.push(parent)
+                
+                running = true;
+                
+                testCount = 0;
+                
+                while(running){
+                    testCount++
+                    if (testCount == 10){
+                        console.log("Hit the countlimit")
+                        break
+                    }
+                    
+                    
+                    
+                    if(postion_details[parent].origin  === true){
+                        running = false
+                    }else{
+                        parent = postion_details[parent].parent
+
+                        console.log("Updated parent", parent)
+
+                        final_path.push(parent)
+                        
+                    }
+
+                }
+                
+                console.log(final_path)
+                
                 break
             }
             
@@ -588,6 +649,7 @@ Crafty.c('Project_Manager', {
                 /// node_current plus the cost to get to the edge position
                 edge = current_edges[index]
                 
+                
                 /// Distance b/w parent and this edge
                 parent_pos = Game.edge_map[node_current].loc
                 edge_pos = Game.edge_map[edge].loc
@@ -597,6 +659,15 @@ Crafty.c('Project_Manager', {
 
                 distance_parent = Math.floor(Math.sqrt((dx ** 2) + (dy ** 2)))
                 
+                
+                /// This disctance that the path has traveled so far
+                historic_cost = postion_details[node_current].history
+                
+                total_cost = historic_cost + distance_parent
+                
+                /// add this cost to the histori variable of this edige 
+                //postion_details[edge].history = total_cost
+                
                 /// Distance b/w this edge anf the goal 
                 goal_pos = Game.edge_map[Game.rec_zone].loc
 
@@ -605,24 +676,36 @@ Crafty.c('Project_Manager', {
 
                 distance_goal = Math.floor(Math.sqrt((dx ** 2) + (dy ** 2)))              
                 
-                F = distance_parent + distance_goal
+                F = total_cost + distance_goal
                 
-                console.log(current_edges[index], distance_parent, distance_goal)
+                console.log('Current Node: ', node_current, "Current edge:", edge)
+                
+                console.log("Current F", F)
                 
                 /// Test to see if the edge is on the closed list 
-                console.log(edge , closed_list)
-                edgeFoundIndex_closed = closed_list.indexOf(edge);
-                edgeFoundIndex_open = open_list.indexOf(edge);
+               /// console.log(edge , closed_list)
+                edgeFoundIndex_closed = closed_list.indexOf(edge.toString());
+                edgeFoundIndex_open = open_list.indexOf(edge.toString());
+                
+                console.log('openlist', open_list, edgeFoundIndex_open)
+                console.log('closedlist', closed_list, edgeFoundIndex_closed)
 
                 //if node_successor is on the OPEN list
                //but the existing one is as good
-               //or better then discard this successor and continue;
-                if (edgeFoundIndex_open>0){
+               //or better then discard this su ccessor and continue;
+                if (edgeFoundIndex_open >= 0){
                  
                     existing_node = open_list[edgeFoundIndex_open];
                     
-                     if (postion_details[edge].F <= F){
+                    console.log("F of the open list", postion_details[existing_node].F)
+                    
+                     if (postion_details[existing_node].F < F){
+                       console.log(existing_node, " is better on the open list")
+                       
                        continue;
+                     }else{
+                         /// get rid of it
+                         open_list.splice(edgeFoundIndex_open, 1);
                      }
                 }/// End of Checking if node in closed list
                 
@@ -630,28 +713,64 @@ Crafty.c('Project_Manager', {
                //if node_successor is on the CLOSED list
                //but the existing one is as good
                //or better then discard this successor and continue;
-                if (edgeFoundIndex_closed>0){
+                if (edgeFoundIndex_closed >= 0){
                  
                     existing_node = closed_list[edgeFoundIndex_closed];
                     
-                     if (postion_details[edge].F <= F){
+                    console.log("F of the closed list", postion_details[existing_node].F)
+                    
+                     if (postion_details[existing_node].F < F){
+                         console.log(existing_node, " is better on the closed list")
                        continue;
+                         
                      }// End of If to test if the new approch to the discovered node is better than the one found 
+                    else{
+                        /// get rid of it from closed list
+                        closed_list.splice(edgeFoundIndex_closed, 1 );
+                        
+                    }
 
                 }// End of Checking if node in closed list 
                 
                 /// In theory is a better path to the edge is found on the open or closed this this line will never run 
                 /// this path is now the best 
-                postion_details[edge] = {parent: node_current, F: F}
-                    
-                //Remove occurences of node_successor from OPEN and CLOSED
-               if (edgeFoundIndex_open!=-1)
-                  open_list.splice(edgeFoundIndex_open, 1);
-               if (edgeFoundIndex_closed!=-1)
-                  closed_list.splice(edgeFoundIndex_closed, 1 );
+                console.log('Neither the open or closed list has a better members')
                 
-                /// Add this edge to the open list
-                open_list.push(edge)
+                console.log("print this edge", postion_details[edge])
+                 console.log("print has own property", postion_details.hasOwnProperty(edge))
+                
+            
+                if(postion_details.hasOwnProperty(edge)){
+                    
+                    postion_details[edge] = {F: F, history: total_cost}     
+
+                    console.log("rewriting parent Info", edge, postion_details[edge].parent)
+
+                    if(edge != postion_details[edge].parent){
+                        console.log('rewriting parent of', edge)
+                        postion_details[edge].parent = node_current
+                    }
+                    
+                    
+                }else{
+                    console.log("Creating new entry for ", edge)
+                    postion_details[edge] = {F: F, history: total_cost, parent: node_current}
+                }
+                
+               
+//                //Remove occurences of node_successor from OPEN and CLOSED
+//               if (edgeFoundIndex_open!=-1)
+//                  open_list.splice(edgeFoundIndex_open, 1);
+//               if (edgeFoundIndex_closed!=-1)
+//                  closed_list.splice(edgeFoundIndex_closed, 1 );
+                
+
+                /// Add this edge to the open list if it is not there ( if it was there it should of been remove abouve cuuz this is better)
+                
+                if (edgeFoundIndex_closed===-1){
+                    open_list.push(edge)
+                }
+                
                 
             }// end of for loop for edges 
             
