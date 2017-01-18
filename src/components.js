@@ -446,9 +446,32 @@ Crafty.c('Project_Manager', {
     .attr({w:32/2, h: 32 - 2, z: 1})
     .color('rgb(255,0,0)')
     .bind("TweenEnd", function() {
+        /// We will wonder 5 rounds 
+        /// We will follow an A* path until completion 
+        
+        /// do we have a A* rount with things in it
+        if (this.a_star_path.length > 0){
+            /// get the next item
+            next_edge = this.a_star_path.pop();
             
-            this.wonder()
-            });
+             
+        }else if(this.wonder_count === 5){
+            /// if we've hit the end of wonder period 
+            this.a_star_path = this.a_star_search(this.current_position);
+            /// set the wonder count to 0 
+            this.wonder_count = 0;
+        }
+        else{
+            /// get the next edge to wonder to
+            next_edge = this.wonder()
+            this.wonder_count++
+        }
+        
+        /// Go to the next edge 
+        this.follow(next_edge)
+            
+    
+    });
     
   },
           
@@ -465,7 +488,12 @@ Crafty.c('Project_Manager', {
     
         position = Game.edge_map[posLetter].loc
         this.attr({x: position[0] * Game.map_grid.tile.height, y: position[1] * Game.map_grid.tile.height})  
-        this.wonder()
+        
+        this.a_star_path = []
+        this.wonder_count = 0; 
+        next_edge = this.wonder()
+        /// Go to the next edge 
+        this.follow(next_edge)
     },
     
     wonder: function(){
@@ -493,11 +521,36 @@ Crafty.c('Project_Manager', {
         
         // Set the next position to jurney too
         next_edge = current_edges[index]
-        //console.log(next_edge)
-
-        /// get distance between to places
-        //console.log(current_edges)
-        //console.log(next_edge)
+        
+        return(next_edge)
+        /// This section was moved into the follow function. 
+        
+        
+//        //console.log(next_edge)
+//
+//        /// get distance between to places
+//        //console.log(current_edges)
+//        //console.log(next_edge)
+//        next_pos = Game.edge_map[next_edge].loc
+//        this_pos = Game.edge_map[this.current_position].loc
+//        
+//        dx = next_pos[0] - this_pos[0]
+//        dy = next_pos[1] - this_pos[1]
+//        
+//        distance = Math.floor(Math.sqrt((dx ** 2) + (dy ** 2)))
+//        
+//        
+//        // Calulate the speed to get there 
+//        millisecs = (distance/this.speed) * 1000
+//        
+//        // Tween to the next location
+//        this.tween({x: next_pos[0] * Game.map_grid.tile.height, y: next_pos[1] * Game.map_grid.tile.height}, millisecs)
+//        this.previous_position = this.current_position;
+//        this.current_position = next_edge
+    }, // End of wonder function
+    
+    follow: function(next_edge){
+        
         next_pos = Game.edge_map[next_edge].loc
         this_pos = Game.edge_map[this.current_position].loc
         
@@ -514,7 +567,8 @@ Crafty.c('Project_Manager', {
         this.tween({x: next_pos[0] * Game.map_grid.tile.height, y: next_pos[1] * Game.map_grid.tile.height}, millisecs)
         this.previous_position = this.current_position;
         this.current_position = next_edge
-    }, // End of wonder function
+        
+    },
     
     a_star_search: function(current_position){
         /// this should really be done with node objects,
@@ -557,11 +611,11 @@ Crafty.c('Project_Manager', {
             counter = counter + 1
             console.log(counter)
             if (counter === 100){
-                console.log("Hit 10")
+                console.log("Hit 100")
+                return([])
+                
                 break
             }
-            
-            console.log("---------------------------")
             
             
             /// Find the item with the lowest F 
@@ -591,9 +645,6 @@ Crafty.c('Project_Manager', {
             
             node_current = open_list[lowestPosIndex]
             
-            console.log(node_current)
-            console.log("---------------------------")
-            
             
             /// If node_current i the same states as node_goal then
             // yeah er are done 
@@ -603,10 +654,8 @@ Crafty.c('Project_Manager', {
                 /// Get the path 
                 final_path = []
                 
-                console.log(node_current)
                 final_path.push(node_current)
                 parent = postion_details[node_current].parent
-                console.log("first parent", parent)
                 final_path.push(parent)
                 
                 running = true;
@@ -616,7 +665,8 @@ Crafty.c('Project_Manager', {
                 while(running){
                     testCount++
                     if (testCount == 10){
-                        console.log("Hit the countlimit")
+                        console.log("Hit the countlimit for back tracking, 10")
+                        return([])
                         break
                     }
                     
@@ -626,9 +676,6 @@ Crafty.c('Project_Manager', {
                         running = false
                     }else{
                         parent = postion_details[parent].parent
-
-                        console.log("Updated parent", parent)
-
                         final_path.push(parent)
                         
                     }
@@ -636,10 +683,13 @@ Crafty.c('Project_Manager', {
                 }
                 
                 console.log(final_path)
+                return(final_path)
                 
                 break
-            }
+            }//// End of Found the End 
             
+            console.log(node_current)
+            console.log(Game.edge_map[node_current])
             // Get edges of current node
             current_edges = Game.edge_map[node_current].edges
             
@@ -677,18 +727,12 @@ Crafty.c('Project_Manager', {
                 distance_goal = Math.floor(Math.sqrt((dx ** 2) + (dy ** 2)))              
                 
                 F = total_cost + distance_goal
-                
-                console.log('Current Node: ', node_current, "Current edge:", edge)
-                
-                console.log("Current F", F)
+            
                 
                 /// Test to see if the edge is on the closed list 
                /// console.log(edge , closed_list)
                 edgeFoundIndex_closed = closed_list.indexOf(edge.toString());
                 edgeFoundIndex_open = open_list.indexOf(edge.toString());
-                
-                console.log('openlist', open_list, edgeFoundIndex_open)
-                console.log('closedlist', closed_list, edgeFoundIndex_closed)
 
                 //if node_successor is on the OPEN list
                //but the existing one is as good
@@ -697,11 +741,8 @@ Crafty.c('Project_Manager', {
                  
                     existing_node = open_list[edgeFoundIndex_open];
                     
-                    console.log("F of the open list", postion_details[existing_node].F)
-                    
                      if (postion_details[existing_node].F < F){
-                       console.log(existing_node, " is better on the open list")
-                       
+                       /// The existing node is better on the open list, skip to next edge 
                        continue;
                      }else{
                          /// get rid of it
@@ -717,10 +758,8 @@ Crafty.c('Project_Manager', {
                  
                     existing_node = closed_list[edgeFoundIndex_closed];
                     
-                    console.log("F of the closed list", postion_details[existing_node].F)
-                    
                      if (postion_details[existing_node].F < F){
-                         console.log(existing_node, " is better on the closed list")
+                         //// The exisiting node is better on the closed list, skip to the next edge 
                        continue;
                          
                      }// End of If to test if the new approch to the discovered node is better than the one found 
@@ -734,37 +773,20 @@ Crafty.c('Project_Manager', {
                 
                 /// In theory is a better path to the edge is found on the open or closed this this line will never run 
                 /// this path is now the best 
-                console.log('Neither the open or closed list has a better members')
-                
-                console.log("print this edge", postion_details[edge])
-                 console.log("print has own property", postion_details.hasOwnProperty(edge))
-                
-            
+
                 if(postion_details.hasOwnProperty(edge)){
                     
                     postion_details[edge] = {F: F, history: total_cost}     
 
-                    console.log("rewriting parent Info", edge, postion_details[edge].parent)
-
                     if(edge != postion_details[edge].parent){
-                        console.log('rewriting parent of', edge)
                         postion_details[edge].parent = node_current
                     }
                     
-                    
+                    /// If this node is not already in psotion details add it 
                 }else{
-                    console.log("Creating new entry for ", edge)
                     postion_details[edge] = {F: F, history: total_cost, parent: node_current}
                 }
                 
-               
-//                //Remove occurences of node_successor from OPEN and CLOSED
-//               if (edgeFoundIndex_open!=-1)
-//                  open_list.splice(edgeFoundIndex_open, 1);
-//               if (edgeFoundIndex_closed!=-1)
-//                  closed_list.splice(edgeFoundIndex_closed, 1 );
-                
-
                 /// Add this edge to the open list if it is not there ( if it was there it should of been remove abouve cuuz this is better)
                 
                 if (edgeFoundIndex_closed===-1){
@@ -781,11 +803,7 @@ Crafty.c('Project_Manager', {
             current_index = open_list.indexOf(node_current)
 
             open_list.splice(current_index, 1)
-            
-            console.log("openlist", open_list)
-            console.log("closedlist", closed_list)
-            
-            ///break
+
             
         }// End of while loop 
         
