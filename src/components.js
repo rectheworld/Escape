@@ -469,8 +469,33 @@ Crafty.c('Project_Manager', {
         
         /// Go to the next edge 
         this.follow(next_edge)
+        
+        
             
-    
+        return(this);
+    })
+    .bind("LOOKWHEREIAM", function(player_pos_name){
+        /// these are the locations we would consiter allert
+        /// get edges of current and clone into list for us 
+        var current_edges_og = Game.edge_map[this.current_position].edges
+        var current_edges = []; // An new empty array
+        for (var i = 0, len = current_edges_og.length; i < len; i++) {
+            current_edges[i] = current_edges_og[i];
+        }
+        
+        // add the current position.
+        current_edges.push(this.current_position)
+        
+        var player_pos_index = current_edges.indexOf(player_pos_name);
+        
+        
+        if(player_pos_index > -1){
+            /// alert on 
+            console.log("AHHH Your so close!!!")
+        }else{
+            /// alert off 
+        }
+        
     });
     
   },
@@ -609,9 +634,9 @@ Crafty.c('Project_Manager', {
             
             /// for testing 
             counter = counter + 1
-            console.log(counter)
+//            console.log(counter)
             if (counter === 100){
-                console.log("Hit 100")
+//                console.log("Hit 100")
                 return([])
                 
                 break
@@ -634,7 +659,7 @@ Crafty.c('Project_Manager', {
                 
                 this_F = postion_details[pos].F
                 
-                console.log(pos, this_F)
+//                console.log(pos, this_F)
                 
                 if (this_F < lowest_F){
                     lowest_F = this_F
@@ -649,7 +674,7 @@ Crafty.c('Project_Manager', {
             /// If node_current i the same states as node_goal then
             // yeah er are done 
             if(node_current == Game.rec_zone){
-                console.log('FOUND THE END!!!!')
+//                console.log('FOUND THE END!!!!')
                 
                 /// Get the path 
                 final_path = []
@@ -665,7 +690,7 @@ Crafty.c('Project_Manager', {
                 while(running){
                     testCount++
                     if (testCount == 10){
-                        console.log("Hit the countlimit for back tracking, 10")
+//                        console.log("Hit the countlimit for back tracking, 10")
                         return([])
                         break
                     }
@@ -682,14 +707,14 @@ Crafty.c('Project_Manager', {
 
                 }
                 
-                console.log(final_path)
+//                console.log(final_path)
                 return(final_path)
                 
                 break
             }//// End of Found the End 
             
-            console.log(node_current)
-            console.log(Game.edge_map[node_current])
+//            console.log(node_current)
+//            console.log(Game.edge_map[node_current])
             // Get edges of current node
             current_edges = Game.edge_map[node_current].edges
             
@@ -808,6 +833,21 @@ Crafty.c('Project_Manager', {
         }// End of while loop 
         
         
+    }, /// End of A* path finder 
+    
+    /// Alert is when it is likly that the player character is within rushing distance. 
+    alert: function(){
+        /// Um ok lets experiment here 
+        /// can i check the 10 nearest suqares from the PM's current location 
+        console.log(this.current_position, Game.edge_map[this.current_position].loc)
+        
+        edges = Game.edge_map[this.current_position].edges
+        
+        for(i = 0; i < edges.length; i++){
+            console.log(edges[i], Game.edge_map[edges[i]].loc)
+        }
+            
+        
     }
     
 });
@@ -842,6 +882,7 @@ Crafty.c('ZoneButton', {
   },
   signal_zone: function() {
       Game.rec_zone = this.name
+      Crafty.trigger("LOOKWHEREIAM", this.name)
   }, // End of singal zone
     
 });
